@@ -1,6 +1,4 @@
-import mongoose from 'mongoose';
-
-const { Schema } = mongoose;
+import { Schema, model } from 'mongoose';
 
 // Здесь будет описание схемы пользователя
 
@@ -15,13 +13,13 @@ const userSchema = new Schema<IUser>({
     type: String, // имя — это строка
     required: true, // имя — обязательное поле
     minlength: 2,
-    maxlength: 200,
+    maxlength: 30,
   },
   about: {
     type: String, // about — это строка
     required: true,
     minlength: 2,
-    maxlength: 30,
+    maxlength: 200,
   },
   avatar: {
     type: String,
@@ -30,4 +28,4 @@ const userSchema = new Schema<IUser>({
 });
 
 // Создаю на основе схемы модель, чтобы превратить заготовку в документ
-export default mongoose.model<IUser>('user', userSchema);
+export default model<IUser>('user', userSchema);

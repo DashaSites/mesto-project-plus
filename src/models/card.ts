@@ -1,36 +1,39 @@
-import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
 
-const { Schema } = mongoose;
-
-// Здесь будет описание схемы карточки
-// ПЕРЕПИСАТЬ НИЖЕ ВЕСЬ ЭТОТ ФАЙЛ!
-
+// Описание схемы карточки
 interface ICard {
   name: string;
   link: string;
-  owner:
-  likes:
-  createdAt:
+  owner: Schema.Types.ObjectId;
+  likes: Schema.Types.ObjectId[];
+  createdAt: Date;
 }
 
-const userSchema = new Schema<IUser>({
-  name: { // у пользователя есть имя — опишем требования к имени в схеме:
-    type: String, // имя — это строка
-    required: true, // имя — обязательное поле
-    minlength: 2,
-    maxlength: 200,
-  },
-  about: {
-    type: String, // about — это строка
+const cardSchema = new Schema<ICard>({
+  name: { // у карточки есть имя — опишем требования к имени в схеме:
+    type: String,
     required: true,
     minlength: 2,
     maxlength: 30,
   },
-  avatar: {
+  link: {
     type: String,
     required: true,
+  },
+  owner: {
+    type: Schema.Types.ObjectId,
+    required: true,
+  },
+  likes: [{
+    type: Schema.Types.ObjectId,
+    required: true,
+    default: [],
+  }],
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
 // Создаю на основе схемы модель, чтобы превратить заготовку в документ
-export default mongoose.model<IUser>('user', userSchema);
+export default model<ICard>('card', cardSchema);
