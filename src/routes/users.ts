@@ -1,17 +1,28 @@
-import express, { Router, Request, Response } from 'express';
-
-// Метод Router из библ-ки express создает объект, на который мы повесим обработчики:
-const router = Router();
-
-
-
+import { Router } from 'express';
+import {
+  getUsers,
+  getUserById,
+  createUser,
+} from '../controllers/users';
 // Маршруты роутера (routes) связывают адрес запроса с функцией контроллера.
 // Благодаря этому сервер понимает, что обращение по адресу /users/signup —
 // это запрос на регистрацию, а /users/signin — на авторизацию. Роутер обрабатывает
 // входящий запрос, находит для него соответствующий обработчик и вызывает его.
 
+const userRouter = Router();
 
-// router.get('/books', getBooks);
+// + Маршрут возвращает всех пользователей
+userRouter.get('/', getUsers);
+
+// userRouter.post('/create', createTestUser);
+
+// + Возвращает пользователя по _id
+userRouter.get('/:userId', getUserById);
+
+// + Создаёт пользователя
+userRouter.post('/', createUser);
+
+export default userRouter;
 
 // export default router.get('/users/:id', (req: Request, res: Response) => {
 //   // хорошая практика: явно привести типы

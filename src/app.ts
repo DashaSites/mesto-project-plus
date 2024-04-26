@@ -1,36 +1,39 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import mongoose from 'mongoose';
-import { MongoClient } from 'mongodb';
-import { User, UserSchema } from './database/User';
-
+// import { MongoClient } from 'mongodb';
+// import { User } from './database/User';
+import bodyParser from 'body-parser';
+import cardRouter from './routes/cards';
+import userRouter from './routes/users';
+import NewUser from './models/user';
 
 console.log('hi-1');
 
-// const getDataBase = async () => {
-//   const client = new MongoClient('mongodb://localhost:27017/');
-//   await client.connect();
-//   /* Получаю доступ к нужной базе данных */
-//   const mestodb = client.db('mestodb');
-//   console.log('hi-2');
-//   return mestodb;
-// };
-// getDataBase();
+const app = express();
+const { PORT = 3000 } = process.env;
 
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+app.use(bodyParser.json());
 
-User.create({ firstName: 'foo', lastName: 'bar', username: 'testUser' });
+app.use('/users', userRouter);
+
+app.use('/cards', cardRouter);
+
+// Подключаюсь к базе данных:
+const connect = async () => {
+  mongoose.set('strictQuery', true);
+  await mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+  console.log('Connected to the database');
+
+  await app.listen(PORT);
+  console.log(`App listening on port ${PORT}`);
+};
+
+connect();
 
 // Подключить роуты
 
+// User.create({ firstName: 'foo', lastName: 'bar', username: 'testUser' });
+
+NewUser.create({ name: 'Дед Пихто', about: 'Кот ученый', avatar: 'testUser' });
+
 console.log('hi-3');
-
-const app = express();
-
-const { PORT = 3000 } = process.env;
-
-// app.listen(PORT);
-
-app.listen(PORT, () => {
-  // Если всё работает, консоль покажет, какой порт приложение слушает
-  console.log(`App listening on port ${PORT}`);
-});

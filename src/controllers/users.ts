@@ -1,20 +1,33 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import User from '../models/user';
 
 // Контроллеры (controllers) содержат основную логику обработки запроса —
 // как правило, набор методов для определённой сущности. Например,
-// для пользователя User это методы создания createUser и авторизации signinUser.
-// В методах описывают, как обрабатывать переданные данные и какой рез-т возвращать
+// В контроллерах - основная логика обработки запроса.
+// Для User это методы создания createUser и авторизации signinUser.
+// Методы описывают, как обрабатывать данные и какой результат возвращать.
 
-// Здесь будет описание модели пользователя
-// реализуем функцию создания пользователя
-const createUser = (req: Request, res: Response) => User.create({
-  name: req.body.name,
-  about: req.body.about,
-  avatar: req.body.avatar,
+export const getUsers = (req: Request, res: Response) => {
+  res.send({ });
+};
 
-})
-  .then((user) => res.send(user))
-  .catch((err) => res.status(400).send(err));
+export const createUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = await User.create({
+      name: req.body.name,
+      about: req.body.about,
+      avatar: req.body.avatar,
+    });
+    if (!user) {
+      throw new Error('No user found');
+    }
+    res.send({ data: user });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
 
-export default createUser;
+export const getUserById = (req: Request, res: Response) => {
+  res.send({ message: 'smth' });
+};
