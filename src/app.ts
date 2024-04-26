@@ -5,7 +5,6 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import cardRouter from './routes/cards';
 import userRouter from './routes/users';
-import NewUser from './models/user';
 
 console.log('hi-1');
 
@@ -34,6 +33,6 @@ connect();
 
 // User.create({ firstName: 'foo', lastName: 'bar', username: 'testUser' });
 
-NewUser.create({ name: 'Дед Пихто', about: 'Кот ученый', avatar: 'testUser' });
+// NewUser.create({ name: 'Дед Пихто', about: 'Кот ученый', avatar: 'testUser' });
 
 console.log('hi-3');
