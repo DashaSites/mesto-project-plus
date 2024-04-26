@@ -35,4 +35,4 @@ export interface IUser extends Document {
 
 // registering in mongoose models the schema with the relative interface
 export const User = (mongoose.models.User as Model<IUser>)
-  || mongoose.model<IUser>('User', UserSchema);
+  || mongoose.model<IUser>('strangeuser', UserSchema);
