@@ -10,8 +10,6 @@ const userRouter = Router();
 // + Маршрут возвращает всех пользователей
 userRouter.get('/', getUsers);
 
-// userRouter.post('/create', createTestUser);
-
 // + Возвращает пользователя по _id
 userRouter.get('/:userId', getUserById);
 
