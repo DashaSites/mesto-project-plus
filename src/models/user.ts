@@ -25,7 +25,10 @@ const userSchema = new Schema<IUser>({
     type: String,
     required: [true, 'A value for this field is required'],
   },
-}, { versionKey: false });
+}, {
+  versionKey: false,
+  timestamps: true,
+});
 
 // Создаю на основе схемы модель, чтобы превратить заготовку в документ
 export default model<IUser>('user', userSchema);

@@ -22,18 +22,21 @@ const cardSchema = new Schema<ICard>({
   },
   owner: {
     type: Schema.Types.ObjectId,
+    ref: 'user',
     required: [true, 'A value for this field is required'],
   },
   likes: [{
-    type: Schema.Types.ObjectId,
-    required: [true, 'A value for this field is required'],
+    type: [{ type: Schema.Types.ObjectId, ref: 'user' }],
     default: [],
   }],
   createdAt: {
     type: Date,
     default: Date.now,
   },
-}, { versionKey: false });
+}, {
+  versionKey: false,
+  timestamps: true,
+});
 
 // Создаю на основе схемы модель, чтобы превратить заготовку в документ
 export default model<ICard>('card', cardSchema);

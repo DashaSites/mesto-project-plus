@@ -1,5 +1,12 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
+import {
+  BAD_REQUEST_ERROR,
+  NOT_FOUND_ERROR,
+  REQUEST_SUCCEEDED,
+  RESOURCE_CREATED,
+  INTERNAL_SERVER_ERROR,
+} from '../constants/constants';
 import User from '../models/user';
 
 // Контроллеры (controllers) содержат основную логику обработки запроса.
@@ -9,9 +16,9 @@ import User from '../models/user';
 export const getUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find({});
-    res.status(200).send(users);
+    return res.status(REQUEST_SUCCEEDED).send(users);
   } catch (error) {
-    res.status(500).send({ message: 'Server error' });
+    return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Server error' });
   }
 };
 
@@ -24,15 +31,15 @@ export const getUserById = async (req: Request, res: Response) => {
       error.name = 'NotFoundError';
       return error;
     });
-    return res.status(200).send(user);
+    return res.status(REQUEST_SUCCEEDED).send(user);
   } catch (error) {
     if (error instanceof Error && error.name === 'NotFoundError') {
-      return res.status(404).send({ message: error.message });
+      return res.status(NOT_FOUND_ERROR).send({ message: error.message });
     }
     if (error instanceof mongoose.Error.CastError) {
-      return res.status(400).send({ message: 'Invalid user id' });
+      return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid user id' });
     }
-    return res.status(500).send({ message: error });
+    return res.status(INTERNAL_SERVER_ERROR).send({ message: error });
   }
 };
 
@@ -43,11 +50,11 @@ export const createUser = async (req: Request, res: Response) => {
     if (!newUser) {
       throw new Error('User not found');
     }
-    return res.status(201).send({ data: newUser });
+    return res.status(RESOURCE_CREATED).send({ data: newUser });
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send({ message: error });
+      return res.status(BAD_REQUEST_ERROR).send({ message: error });
     }
-    return res.status(500).send({ message: error });
+    return res.status(INTERNAL_SERVER_ERROR).send({ message: error });
   }
 };
