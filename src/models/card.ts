@@ -29,6 +29,7 @@ const cardSchema = new Schema<ICard>({
     type: Schema.Types.ObjectId,
     ref: 'user',
     default: [],
+    required: [true, 'This field is required'],
   }],
   createdAt: {
     type: Date,
