@@ -4,7 +4,7 @@ import {
   deleteCardById,
   getCards,
   likeCard,
-  unlikeCard,
+  dislikeCard,
 } from '../controllers/cards';
 
 const cardRouter = Router();
@@ -24,6 +24,6 @@ cardRouter.delete('/:cardId', deleteCardById);
 cardRouter.put('/:cardId/likes', likeCard);
 
 // Убрать лайк с карточки
-cardRouter.delete('/:cardId/likes', unlikeCard);
+cardRouter.delete('/:cardId/likes', dislikeCard);
 
 export default cardRouter;
