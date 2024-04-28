@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-// Здесь будет описание схемы пользователя
+// Здесь описание схемы пользователя
 
 interface IUser {
   name: string;
@@ -16,7 +16,7 @@ const userSchema = new Schema<IUser>({
     maxlength: 30,
   },
   about: {
-    type: String, // about — это строка
+    type: String,
     required: [true, 'A value for this field is required'],
     minlength: 2,
     maxlength: 200,

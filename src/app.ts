@@ -6,7 +6,6 @@ import express, {
 } from 'express';
 import mongoose from 'mongoose';
 import path from 'path';
-// import bodyParser from 'body-parser';
 import 'dotenv/config';
 import cardRouter from './routes/cards';
 import userRouter from './routes/users';
@@ -15,7 +14,6 @@ const { PORT = 3000, MONGO_URL = '' } = process.env;
 const app = express();
 
 app.use(json());
-// app.use(bodyParser.json());
 
 // Мидлвар авторизации: временная заглушка для будущей логики авторизации
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -29,7 +27,7 @@ app.use('/users', userRouter);
 
 app.use('/cards', cardRouter);
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Подключаюсь к базе данных:
 const connect = async () => {
@@ -42,8 +40,3 @@ const connect = async () => {
 };
 
 connect();
-
-// Подключить роуты
-// NewUser.create({ name: 'Дед Пихто', about: 'Кот ученый', avatar: 'testUser' });
-
-console.log('hi-1');

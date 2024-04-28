@@ -54,28 +54,48 @@ export const deleteCardById = async (req: Request, res: Response) => {
     if (error instanceof Error && error.name === 'NotFoundError') { // карточка не найдена
       return res.status(NOT_FOUND_ERROR).send({ message: error.message });
     }
-    if (error instanceof mongoose.Error.CastError) { // введен неправильный идентификатор
-      return res.status(BAD_REQUEST_ERROR).send({ message: 'Request is incorrect' });
-    }
     return res.status(INTERNAL_SERVER_ERROR).send({ message: error }); // ошибка сервера
   }
 };
 
-// Декоратор для лайков
-const updateLike = (req: Request, res: Response, next: NextFunction, method: string) => {
-  const { cardId } = req.params;
-  Card.findByIdAndUpdate(cardId, { [method]: { likes: req.user._id } }, { new: true })
-    .orFail(() => new Error('No such card'))
-    .then((card) => {
-      res.send({ data: card });
-    })
-    .catch(next);
+// + Декоратор для лайков
+// const updateLike = (req: Request, res: Response, next: NextFunction, method: string) => {
+//   const { cardId } = req.params;
+//   Card.findByIdAndUpdate(cardId, { [method]: { likes: req.user._id } }, { new: true })
+//     .orFail(() => new Error('No such card'))
+//     .then((card) => {
+//       res.send({ data: card });
+//     })
+//     .catch(next);
+// };
+
+// + Функция-декоратор для лайков
+const updateLike = async (req: Request, res: Response, next: NextFunction, method: string) => {
+  try {
+    const { cardId } = req.params;
+    const updatedCard = await Card
+      .findByIdAndUpdate(cardId, { [method]: { likes: req.user._id } }, { new: true })
+      .orFail(() => {
+        const error = new Error('Card was not found');
+        error.name = 'NotFoundError';
+        return error;
+      });
+    return res.status(REQUEST_SUCCEEDED).send(updatedCard);
+  } catch (error) {
+    if (error instanceof Error && error.name === 'NotFoundError') {
+      return res.status(NOT_FOUND_ERROR).send({ message: error.message });
+    }
+    if (error instanceof mongoose.Error.CastError) {
+      return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid card data' });
+    }
+    return res.status(INTERNAL_SERVER_ERROR).send({ message: error });
+  }
 };
 
-// Лайкаем карточку
+// + Лайкаем карточку
 export const likeCard = (req: Request, res: Response, next: NextFunction) => updateLike(req, res, next, '$addToSet');
 
-// Убираем лайк с карточки
+// + Убираем лайк с карточки
 export const dislikeCard = (req: Request, res: Response, next: NextFunction) => updateLike(req, res, next, '$pull');
 
 // + Лайкаем карточку

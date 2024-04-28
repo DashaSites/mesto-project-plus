@@ -9,19 +9,19 @@ import {
 
 const userRouter = Router();
 
-// + Маршрут возвращает всех пользователей
+// Маршрут возвращает всех пользователей
 userRouter.get('/', getUsers);
 
-// + Возвращает пользователя по _id
+// Возвращает пользователя по _id
 userRouter.get('/:userId', getUserById);
 
-// + Создаёт пользователя
+// Создаёт пользователя
 userRouter.post('/', createUser);
 
-// + Обновляет профиль пользователя
+// Обновляет профиль пользователя
 userRouter.patch('/me', updateUserProfile);
 
-// + Обновляет аватар пользователя
+// Обновляет аватар пользователя
 userRouter.patch('/me/avatar', updateUserAvatar);
 
 export default userRouter;
