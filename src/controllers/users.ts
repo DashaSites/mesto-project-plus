@@ -78,7 +78,7 @@ export const updateUserProfile = async (req: Request, res: Response) => {
       return res.status(NOT_FOUND_ERROR).send({ message: error.message });
     }
     if (error instanceof mongoose.Error.CastError) {
-      return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid user id' });
+      return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid user data' });
     }
     return res.status(INTERNAL_SERVER_ERROR).send({ message: error });
   }
@@ -102,7 +102,7 @@ export const updateUserAvatar = async (req: Request, res: Response) => {
       return res.status(NOT_FOUND_ERROR).send({ message: error.message });
     }
     if (error instanceof mongoose.Error.CastError) {
-      return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid user id' });
+      return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid user data' });
     }
     return res.status(INTERNAL_SERVER_ERROR).send({ message: error });
   }

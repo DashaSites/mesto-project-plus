@@ -60,3 +60,13 @@ export const deleteCardById = async (req: Request, res: Response) => {
     return res.status(INTERNAL_SERVER_ERROR).send({ message: error }); // ошибка сервера
   }
 };
+
+// Лайкаем карточку
+export const likeCard = async (req: Request, res: Response) => {
+  res.send('likeCard');
+};
+
+// Убираем лайк с карточки
+export const unlikeCard = async (req: Request, res: Response) => {
+  res.send('unlikeCard');
+};
