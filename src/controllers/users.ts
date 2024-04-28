@@ -58,3 +58,52 @@ export const createUser = async (req: Request, res: Response) => {
     return res.status(INTERNAL_SERVER_ERROR).send({ message: error });
   }
 };
+
+// Обновляем профиль
+export const updateUserProfile = async (req: Request, res: Response) => {
+  try {
+    const { _id } = req.user; // id текущего пользователя
+    // подразумевается, что в теле запроса пришел профиль уже с обновленными полями
+    // вытаскиваю их из req.body
+    const { name, about } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(_id, { name, about }, { new: true })
+      .orFail(() => {
+        const error = new Error('User not found');
+        error.name = 'NotFoundError';
+        return error;
+      });
+    return res.status(REQUEST_SUCCEEDED).send(updatedUser);
+  } catch (error) {
+    if (error instanceof Error && error.name === 'NotFoundError') {
+      return res.status(NOT_FOUND_ERROR).send({ message: error.message });
+    }
+    if (error instanceof mongoose.Error.CastError) {
+      return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid user id' });
+    }
+    return res.status(INTERNAL_SERVER_ERROR).send({ message: error });
+  }
+};
+
+// Обновляем аватар
+export const updateUserAvatar = async (req: Request, res: Response) => {
+  try {
+    const { _id } = req.user; // id текущего пользователя
+    // пришедший в теле запроса новый аватар - вытаскиваю:
+    const { avatar } = req.body;
+    const updatedAvatar = await User.findByIdAndUpdate(_id, { avatar }, { new: true })
+      .orFail(() => {
+        const error = new Error('User not found');
+        error.name = 'NotFoundError';
+        return error;
+      });
+    return res.status(REQUEST_SUCCEEDED).send(updatedAvatar);
+  } catch (error) {
+    if (error instanceof Error && error.name === 'NotFoundError') {
+      return res.status(NOT_FOUND_ERROR).send({ message: error.message });
+    }
+    if (error instanceof mongoose.Error.CastError) {
+      return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid user id' });
+    }
+    return res.status(INTERNAL_SERVER_ERROR).send({ message: error });
+  }
+};

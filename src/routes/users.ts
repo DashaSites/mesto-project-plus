@@ -18,10 +18,10 @@ userRouter.get('/:userId', getUserById);
 // + Создаёт пользователя
 userRouter.post('/', createUser);
 
-// Обновляет профиль пользователя
+// + Обновляет профиль пользователя
 userRouter.patch('/me', updateUserProfile);
 
-// Обновляет аватар пользователя
+// + Обновляет аватар пользователя
 userRouter.patch('/me/avatar', updateUserAvatar);
 
 export default userRouter;
