@@ -1,17 +1,23 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, {
+  json,
+  NextFunction,
+  Request,
+  Response,
+} from 'express';
 import mongoose from 'mongoose';
-// import { User } from './database/User';
-import bodyParser from 'body-parser';
+import path from 'path';
+// import bodyParser from 'body-parser';
 import 'dotenv/config';
 import cardRouter from './routes/cards';
 import userRouter from './routes/users';
 
-const { PORT = 3000, MONGO_URL } = process.env;
+const { PORT = 3000, MONGO_URL = '' } = process.env;
 const app = express();
 
-app.use(bodyParser.json());
+app.use(json());
+// app.use(bodyParser.json());
 
-// Временная заглушка для будущей логики авторизации
+// Мидлвар авторизации: временная заглушка для будущей логики авторизации
 app.use((req: Request, res: Response, next: NextFunction) => {
   req.user = {
     _id: '662c2971a9308ca534ddc741',
@@ -22,6 +28,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use('/users', userRouter);
 
 app.use('/cards', cardRouter);
+
+app.use(express.static(path.join(__dirname, "public")));
 
 // Подключаюсь к базе данных:
 const connect = async () => {
