@@ -26,7 +26,8 @@ const cardSchema = new Schema<ICard>({
     required: [true, 'A value for this field is required'],
   },
   likes: [{
-    type: [{ type: Schema.Types.ObjectId, ref: 'user' }],
+    type: Schema.Types.ObjectId,
+    ref: 'user',
     default: [],
   }],
   createdAt: {

@@ -63,10 +63,46 @@ export const deleteCardById = async (req: Request, res: Response) => {
 
 // Лайкаем карточку
 export const likeCard = async (req: Request, res: Response) => {
-  res.send('likeCard');
+  try {
+    const { _id } = req.user; // id текущего пользователя
+    const { cardId } = req.params; // идентификатор карточки из урла
+    const likedCard = Card.findByIdAndUpdate(
+      cardId,
+      { $addToSet: { likes: _id } }, // добавить _id в массив, если его там нет
+      { new: true },
+    ).orFail(() => {
+      const error = new Error('Card was not found');
+      error.name = 'NotFoundError';
+      return error;
+    });
+    return res.status(REQUEST_SUCCEEDED).send({ data: likedCard });
+  } catch (error) {
+    if (error instanceof Error && error.name === 'NotFoundError') { // карточка не найдена
+      return res.status(NOT_FOUND_ERROR).send({ message: error.message });
+    }
+    return res.status(INTERNAL_SERVER_ERROR).send({ message: error }); // ошибка сервера
+  }
 };
 
 // Убираем лайк с карточки
 export const unlikeCard = async (req: Request, res: Response) => {
-  res.send('unlikeCard');
+  try {
+    const { _id } = req.user; // id текущего пользователя
+    const { cardId } = req.params; // идентификатор карточки из урла
+    const unlikedCard = Card.findByIdAndUpdate(
+      cardId,
+      { $pull: { likes: _id } }, // убрать _id из массива
+      { new: true },
+    ).orFail(() => {
+      const error = new Error('Card was not found');
+      error.name = 'NotFoundError';
+      return error;
+    });
+    return res.status(REQUEST_SUCCEEDED).send(unlikedCard);
+  } catch (error) {
+    if (error instanceof Error && error.name === 'NotFoundError') { // карточка не найдена
+      return res.status(NOT_FOUND_ERROR).send({ message: error.message });
+    }
+    return res.status(INTERNAL_SERVER_ERROR).send({ message: error }); // ошибка сервера
+  }
 };
