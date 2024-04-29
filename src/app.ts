@@ -5,8 +5,8 @@ import express, {
   Response,
 } from 'express';
 import mongoose from 'mongoose';
-import path from 'path';
 import 'dotenv/config';
+import notFoundRouter from './routes/not-found';
 import cardRouter from './routes/cards';
 import userRouter from './routes/users';
 
@@ -26,6 +26,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use('/users', userRouter);
 
 app.use('/cards', cardRouter);
+
+app.use('/', notFoundRouter);
 
 // Подключаюсь к базе данных:
 const connect = async () => {
