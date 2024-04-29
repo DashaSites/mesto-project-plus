@@ -5,12 +5,12 @@ import express, {
   Response,
 } from 'express';
 import mongoose from 'mongoose';
-import path from 'path';
 import 'dotenv/config';
+import notFoundRouter from './routes/not-found';
 import cardRouter from './routes/cards';
 import userRouter from './routes/users';
 
-const { PORT = 3000, MONGO_URL = '' } = process.env;
+const { PORT = 3000, MONGO_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 const app = express();
 
 app.use(json());
@@ -27,7 +27,7 @@ app.use('/users', userRouter);
 
 app.use('/cards', cardRouter);
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/', notFoundRouter);
 
 // Подключаюсь к базе данных:
 const connect = async () => {
