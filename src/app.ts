@@ -10,7 +10,7 @@ import 'dotenv/config';
 import cardRouter from './routes/cards';
 import userRouter from './routes/users';
 
-const { PORT = 3000, MONGO_URL = '' } = process.env;
+const { PORT = 3000, MONGO_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 const app = express();
 
 app.use(json());
@@ -26,8 +26,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use('/users', userRouter);
 
 app.use('/cards', cardRouter);
-
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Подключаюсь к базе данных:
 const connect = async () => {
