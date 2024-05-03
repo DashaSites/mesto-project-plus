@@ -22,6 +22,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   };
   next();
 });
+// В app.ts важно сначала подключать мидлвары, а потом подключать те роуты, которые
+// используют результаты работы этих мидлваров
 
 app.use('/users', userRouter);
 

@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 import {
   BAD_REQUEST_ERROR,
@@ -46,11 +48,33 @@ export const getUserById = async (req: Request, res: Response) => {
 // Создаем нового пользователя
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const newUser = await User.create(req.body);
+    const {
+      name,
+      about,
+      avatar,
+      email,
+      password,
+    } = req.body; // извлекаю данные запроса
+    const hashedPassword = await bcrypt.hash(password, 10); // хеширую пароль
+    // записываю в базу юзера с захешированным паролем
+    const newUser = await User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hashedPassword,
+    });
     if (!newUser) {
       throw new Error('User not found');
     }
-    return res.status(RESOURCE_CREATED).send({ data: newUser });
+    // const { _id, name, about, avatar } = newUser;
+    return res.status(RESOURCE_CREATED).send({ // send({ data: newUser });
+      _id: newUser._id,
+      name: newUser.name,
+      about: newUser.about,
+      avatar: newUser.avatar,
+      email: newUser.email,
+    });
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       return res.status(BAD_REQUEST_ERROR).send({ message: 'Incorrect data' });
@@ -118,4 +142,10 @@ export const updateUserAvatar = async (req: Request, res: Response) => {
     }
     return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' });
   }
+};
+
+// Аутентификация пользователя
+export const login = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  // Если почта и пароль совпадают с теми, что есть в базе, пользователь входит на сайт
 };
