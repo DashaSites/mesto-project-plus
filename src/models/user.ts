@@ -63,7 +63,7 @@ const userSchema = new Schema<IUser, UserModel>({
 // у него будет два параметра — почта и пароль
 // добавим метод findUserByCredentials схеме пользователя
 // у него будет два параметра — почта и пароль
-userSchema.static('findUserByCredentials', function findUserByCredentials(email: string, password: string) {
+userSchema.static('findUserByCredentials', async function findUserByCredentials(email: string, password: string) {
   return this.findOne({ email })
     .then((user) => {
       if (!user) {

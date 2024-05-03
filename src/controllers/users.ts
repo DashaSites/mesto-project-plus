@@ -152,8 +152,9 @@ export const login = async (req: Request, res: Response) => {
     .then((user) => {
       // создаю токен: пейлоуд токена и секретный ключ подписи
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      res.setHeader('Set-Cookie', `token=${token}; HttpOnly`);
       // возвращаю токен
-      res.send({ token });
+      res.sendStatus(REQUEST_SUCCEEDED);
     })
     .catch((err) => {
       res

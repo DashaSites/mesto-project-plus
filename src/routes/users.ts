@@ -2,7 +2,6 @@ import { Router } from 'express';
 import {
   getUsers,
   getUserById,
-  createUser,
   updateUserProfile,
   updateUserAvatar,
 } from '../controllers/users';
