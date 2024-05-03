@@ -144,8 +144,20 @@ export const updateUserAvatar = async (req: Request, res: Response) => {
   }
 };
 
-// Аутентификация пользователя
+// Аутентификация (логин)
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  // Если почта и пароль совпадают с теми, что есть в базе, пользователь входит на сайт
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      // создаю токен: пейлоуд токена и секретный ключ подписи
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      // возвращаю токен
+      res.send({ token });
+    })
+    .catch((err) => {
+      res
+        .status(401)
+        .send({ message: err.message });
+    });
 };

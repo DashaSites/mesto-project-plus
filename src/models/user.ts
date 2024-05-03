@@ -1,5 +1,11 @@
-import { Schema, model } from 'mongoose';
+import {
+  Model,
+  Schema,
+  model,
+  Document,
+} from 'mongoose';
 import validator from 'validator';
+import bcrypt from 'bcryptjs';
 
 // Здесь описание схемы пользователя
 
@@ -11,7 +17,11 @@ interface IUser {
   password: string
 }
 
-const userSchema = new Schema<IUser>({
+interface UserModel extends Model<IUser> {
+  findUserByCredentials: (email: string, password: string) => Promise<Document<unknown, any, IUser>>
+}
+
+const userSchema = new Schema<IUser, UserModel>({
   name: { // у пользователя есть имя — опишем требования к имени в схеме:
     type: String, // имя — это строка
     minlength: 2,
@@ -49,5 +59,27 @@ const userSchema = new Schema<IUser>({
   timestamps: true,
 });
 
+// добавим метод findUserByCredentials схеме пользователя
+// у него будет два параметра — почта и пароль
+// добавим метод findUserByCredentials схеме пользователя
+// у него будет два параметра — почта и пароль
+userSchema.static('findUserByCredentials', function findUserByCredentials(email: string, password: string) {
+  return this.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Wrong email or password'));
+      }
+
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            return Promise.reject(new Error('Wrong email or password'));
+          }
+
+          return user; // теперь user доступен
+        });
+    });
+});
+
 // Создаю на основе схемы модель, чтобы превратить заготовку в документ
-export default model<IUser>('user', userSchema);
+export default model<IUser, UserModel>('user', userSchema);

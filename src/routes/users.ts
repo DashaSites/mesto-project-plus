@@ -15,9 +15,6 @@ userRouter.get('/', getUsers);
 // Возвращает пользователя по _id
 userRouter.get('/:userId', getUserById);
 
-// Создаёт пользователя
-userRouter.post('/', createUser);
-
 // Обновляет профиль пользователя
 userRouter.patch('/me', updateUserProfile);
 

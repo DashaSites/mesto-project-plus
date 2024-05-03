@@ -9,6 +9,7 @@ import 'dotenv/config';
 import notFoundRouter from './routes/not-found';
 import cardRouter from './routes/cards';
 import userRouter from './routes/users';
+import { createUser, login } from './controllers/users';
 
 const { PORT = 3000, MONGO_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 const app = express();
@@ -24,6 +25,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 // В app.ts важно сначала подключать мидлвары, а потом подключать те роуты, которые
 // используют результаты работы этих мидлваров
+
+// Логин
+app.post('/signin', login);
+
+// Регистрация
+app.post('/signup', createUser);
 
 app.use('/users', userRouter);
 
