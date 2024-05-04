@@ -4,6 +4,7 @@ import {
   getUserById,
   updateUserProfile,
   updateUserAvatar,
+  getCurrentUserInfo,
 } from '../controllers/users';
 
 const userRouter = Router();
@@ -13,6 +14,9 @@ userRouter.get('/', getUsers);
 
 // Возвращает пользователя по _id
 userRouter.get('/:userId', getUserById);
+
+// Получает информацию о текущем пользователе
+userRouter.get('/me', getCurrentUserInfo);
 
 // Обновляет профиль пользователя
 userRouter.patch('/me', updateUserProfile);

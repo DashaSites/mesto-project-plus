@@ -5,6 +5,7 @@ import express, {
   Response,
 } from 'express';
 import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
 import 'dotenv/config';
 import notFoundRouter from './routes/not-found';
 import cardRouter from './routes/cards';
@@ -13,9 +14,10 @@ import { createUser, login } from './controllers/users';
 import auth from './middlewares/auth';
 
 const { PORT = 3000, MONGO_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
-const app = express();
 
+const app = express();
 app.use(json());
+app.use(cookieParser());
 
 // Мидлвар авторизации: временная заглушка для будущей логики авторизации
 app.use((req: Request, res: Response, next: NextFunction) => {

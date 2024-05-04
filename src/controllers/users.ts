@@ -45,6 +45,26 @@ export const getUserById = async (req: Request, res: Response) => {
   }
 };
 
+// Получаем информацию о текущем пользователе
+export const getCurrentUserInfo = async (req: Request, res: Response) => {
+  try { // находим текущего пользователя по его токену, который лежит в req.user
+    const user = await User.findById(req.user).orFail(() => {
+      const error = new Error('User was not found');
+      error.name = 'NotFoundError';
+      return error;
+    });
+    return res.status(REQUEST_SUCCEEDED).send(user);
+  } catch (error) {
+    if (error instanceof Error && error.name === 'NotFoundError') {
+      return res.status(NOT_FOUND_ERROR).send({ message: error.message });
+    }
+    if (error instanceof mongoose.Error.CastError) {
+      return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid user id' });
+    }
+    return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' });
+  }
+};
+
 // Создаем нового пользователя
 export const createUser = async (req: Request, res: Response) => {
   try {
@@ -145,16 +165,16 @@ export const updateUserAvatar = async (req: Request, res: Response) => {
 };
 
 // Аутентификация (логин)
-export const login = async (req: Request, res: Response) => {
+export const login = (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
       // создаю токен: пейлоуд токена и секретный ключ подписи
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.setHeader('Set-Cookie', `token=${token}; HttpOnly`);
-      // возвращаю токен
-      res.sendStatus(REQUEST_SUCCEEDED);
+      res
+        .cookie('token', token, { httpOnly: true })
+        .json({ message: 'You are successfully logged in' });
     })
     .catch((err) => {
       res
@@ -162,3 +182,21 @@ export const login = async (req: Request, res: Response) => {
         .send({ message: err.message });
     });
 };
+
+// export const login = async (req: Request, res: Response) => {
+//   const { email, password } = req.body;
+
+//   return User.findUserByCredentials(email, password)
+//     .then((user) => {
+//       // создаю токен: пейлоуд токена и секретный ключ подписи
+//       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+//       res.setHeader('Set-Cookie', `token=${token}; HttpOnly`);
+//       // возвращаю токен
+//       res.sendStatus(REQUEST_SUCCEEDED);
+//     })
+//     .catch((err) => {
+//       res
+//         .status(401)
+//         .send({ message: err.message });
+//     });
+// };
