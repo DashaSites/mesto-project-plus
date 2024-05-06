@@ -6,8 +6,9 @@ import {
   NOT_FOUND_ERROR,
   BAD_REQUEST_ERROR,
   RESOURCE_CREATED,
+  NO_PERMISSION_ERROR,
 } from '../constants/constants';
-import Card from '../models/card';
+import Card, { noPermissionError } from '../models/card';
 
 // Методы контроллеров описывают, как обрабатывать данные и какой результат возвращать.
 
@@ -25,8 +26,7 @@ export const getCards = async (req: Request, res: Response) => {
 export const createCard = async (req: Request, res: Response) => {
   try {
     const { name, link } = req.body;
-    const { _id } = req.user; // id текущего пользователя
-    const newCard = await Card.create({ name, link, owner: _id }); // создаю карточку
+    const newCard = await Card.create({ name, link, owner: req.user }); // создаю карточку
     return res.status(RESOURCE_CREATED).send({ data: newCard }); // возвращаю ее с сервера
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
@@ -40,24 +40,23 @@ export const createCard = async (req: Request, res: Response) => {
 export const deleteCardById = async (req: Request, res: Response) => {
   try {
     const { cardId } = req.params; // идентификатор карточки из урла
-    const { _id } = req.user; // id текущего пользователя
-    const card = await Card.findByIdAndDelete(cardId).orFail(() => {
-      const error = new Error('Card was not found');
-      error.name = 'NotFoundError';
-      return error;
-    });
-    if (card.owner.toString() !== _id) {
-      throw new Error('You are not permitted to delete this card');
-    }
-    return res.status(REQUEST_SUCCEEDED).send(card);
+    // const { _id } = req.user; // id текущего пользователя
+
+    const cardIdString = cardId.toString();
+    console.log(`cardIdString on line 45: ${cardIdString}`);
+    const idString = String(req.user);
+    console.log(`idString on line 47: ${idString}`);
+
+    const deletedCard = await Card.checkAndDeleteCard(cardIdString, idString);
+    return res.status(REQUEST_SUCCEEDED).send(deletedCard);
   } catch (error) {
-    if (error instanceof mongoose.Error.CastError) {
+    if (error instanceof mongoose.Error.CastError) { // ошибка "не найдено"
       return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid user data' });
     }
-    if (error instanceof Error && error.name === 'NotFoundError') { // карточка не найдена
-      return res.status(NOT_FOUND_ERROR).send({ message: error.message });
-    }
-    return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' }); // ошибка сервера
+    if (error === noPermissionError) { // ошибка "нет прав удалить эту карту"
+      return res.status(NO_PERMISSION_ERROR).send({ message: 'You are not permitted to delete this card' });
+    } // ошибка сервера
+    return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' });
   }
 };
 
@@ -80,6 +79,10 @@ const updateLike = async (req: Request, res: Response, next: NextFunction, metho
     if (error instanceof mongoose.Error.CastError) {
       return res.status(BAD_REQUEST_ERROR).send({ message: 'Incorrect data' });
     }
+    if (error instanceof mongoose.Error.CastError) {
+      return res.status(BAD_REQUEST_ERROR).send({ message: 'Incorrect data' });
+    }
+
     return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' });
   }
 };

@@ -14,6 +14,12 @@ import User from '../models/user';
 // Контроллеры (controllers) содержат основную логику обработки запроса.
 // Методы описывают, как обрабатывать данные и какой результат возвращать.
 
+// interface RequestUser extends Request {
+//   user: {
+//     _id: string | Schema.Types.ObjectId;
+//   };
+// }
+
 // Получаем всех пользователей
 export const getUsers = async (req: Request, res: Response) => {
   try {
@@ -49,6 +55,7 @@ export const getUserById = async (req: Request, res: Response) => {
 export const getCurrentUserInfo = async (req: Request, res: Response) => {
   try { // находим текущего пользователя по его токену, который лежит в req.user
     const user = await User.findById(req.user).orFail(() => {
+      console.log(req.user);
       const error = new Error('User was not found');
       error.name = 'NotFoundError';
       return error;
@@ -59,6 +66,7 @@ export const getCurrentUserInfo = async (req: Request, res: Response) => {
       return res.status(NOT_FOUND_ERROR).send({ message: error.message });
     }
     if (error instanceof mongoose.Error.CastError) {
+      console.log(req.user);
       return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid user id' });
     }
     return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' });

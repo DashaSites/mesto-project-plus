@@ -12,11 +12,11 @@ const userRouter = Router();
 // Маршрут возвращает всех пользователей
 userRouter.get('/', getUsers);
 
-// Возвращает пользователя по _id
-userRouter.get('/:userId', getUserById);
-
 // Получает информацию о текущем пользователе
 userRouter.get('/me', getCurrentUserInfo);
+
+// Возвращает пользователя по _id
+userRouter.get('/:userId', getUserById);
 
 // Обновляет профиль пользователя
 userRouter.patch('/me', updateUserProfile);

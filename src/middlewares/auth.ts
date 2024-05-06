@@ -17,7 +17,6 @@ export default (req: Request, res: Response, next: NextFunction) => {
   try {
     // попытаемся проверить токен
     payload = jwt.verify(token, 'some-secret-key') as JwtPayload;
-    console.log(`line 25 - ${payload}`);
   } catch (err) {
     // отправим ошибку, если не получилось
     return res

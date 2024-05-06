@@ -1,8 +1,5 @@
 import express, {
   json,
-  NextFunction,
-  Request,
-  Response,
 } from 'express';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
@@ -20,12 +17,13 @@ app.use(json());
 app.use(cookieParser());
 
 // Мидлвар авторизации: временная заглушка для будущей логики авторизации
-app.use((req: Request, res: Response, next: NextFunction) => {
-  req.user = {
-    _id: '662c2971a9308ca534ddc741',
-  };
-  next();
-});
+// app.use((req: Request, res: Response, next: NextFunction) => {
+//   req.user = {
+//     _id: '662c2971a9308ca534ddc741',
+//   };
+//   next();
+// });
+
 // В app.ts важно сначала подключать мидлвары, а потом подключать те роуты, которые
 // используют результаты работы этих мидлваров
 

@@ -52,7 +52,7 @@ const userSchema = new Schema<IUser, UserModel>({
   password: {
     type: String,
     required: [true, 'A value for this field is required'],
-    // select: false,
+    select: false,
   },
 }, {
   versionKey: false,
@@ -64,7 +64,7 @@ const userSchema = new Schema<IUser, UserModel>({
 // добавим метод findUserByCredentials схеме пользователя
 // у него будет два параметра — почта и пароль
 userSchema.static('findUserByCredentials', async function findUserByCredentials(email: string, password: string) {
-  return this.findOne({ email })
+  return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
         return Promise.reject(new Error('Wrong email or password'));
