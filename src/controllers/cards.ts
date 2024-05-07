@@ -41,11 +41,8 @@ export const deleteCardById = async (req: Request, res: Response) => {
   try {
     const { cardId } = req.params; // идентификатор карточки из урла
     // const { _id } = req.user; // id текущего пользователя
-
     const cardIdString = cardId.toString();
-    console.log(`cardIdString on line 45: ${cardIdString}`);
     const idString = String(req.user);
-    console.log(`idString on line 47: ${idString}`);
 
     const deletedCard = await Card.checkAndDeleteCard(cardIdString, idString);
     return res.status(REQUEST_SUCCEEDED).send(deletedCard);

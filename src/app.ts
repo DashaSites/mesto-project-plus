@@ -9,6 +9,7 @@ import cardRouter from './routes/cards';
 import userRouter from './routes/users';
 import { createUser, login } from './controllers/users';
 import auth from './middlewares/auth';
+import { requestLogger, errorLogger } from './middlewares/logger';
 
 const { PORT = 3000, MONGO_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
@@ -27,19 +28,18 @@ app.use(cookieParser());
 // В app.ts важно сначала подключать мидлвары, а потом подключать те роуты, которые
 // используют результаты работы этих мидлваров
 
-// Логин
-app.post('/signin', login);
-// Регистрация
-app.post('/signup', createUser);
+app.use(requestLogger); // подключаю логер запросов
 
-// Авторизация
-app.use(auth);
+app.post('/signin', login); // логин
+app.post('/signup', createUser); // регистрация
+
+app.use(auth); // авторизация
 
 app.use('/users', userRouter);
-
 app.use('/cards', cardRouter);
-
 app.use('/', notFoundRouter);
+
+app.use(errorLogger); // подключаю логер ошибок
 
 // Подключаюсь к базе данных:
 const connect = async () => {
