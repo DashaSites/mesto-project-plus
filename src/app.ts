@@ -9,7 +9,7 @@ import cardRouter from './routes/cards';
 import userRouter from './routes/users';
 import { createUser, login } from './controllers/users';
 import auth from './middlewares/auth';
-import { requestLogger, errorLogger } from './middlewares/logger';
+import { errorLogger, requestLogger } from './middlewares/logger';
 
 const { PORT = 3000, MONGO_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 

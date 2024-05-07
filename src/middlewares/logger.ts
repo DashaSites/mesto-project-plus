@@ -2,7 +2,7 @@ import winston from 'winston';
 import expressWinston from 'express-winston';
 
 //  Логер запросов
-const requestLogger = expressWinston.logger({
+export const requestLogger = expressWinston.logger({
   transports: [
     new winston.transports.Console({
       format: winston.format.simple(),
@@ -15,7 +15,7 @@ const requestLogger = expressWinston.logger({
 });
 
 // Логер ошибок
-const errorLogger = expressWinston.errorLogger({
+export const errorLogger = expressWinston.errorLogger({
   transports: [
     new winston.transports.File({
       filename: 'error.log',
@@ -23,8 +23,3 @@ const errorLogger = expressWinston.errorLogger({
   ],
   format: winston.format.json(),
 });
-
-export default {
-  requestLogger,
-  errorLogger,
-};
