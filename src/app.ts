@@ -10,6 +10,7 @@ import userRouter from './routes/users';
 import { createUser, login } from './controllers/users';
 import auth from './middlewares/auth';
 import { errorLogger, requestLogger } from './middlewares/logger';
+import { errorHandler } from './middlewares/error-handler';
 
 const { PORT = 3000, MONGO_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
@@ -33,13 +34,15 @@ app.use(requestLogger); // подключаю логер запросов
 app.post('/signin', login); // логин
 app.post('/signup', createUser); // регистрация
 
-app.use(auth); // авторизация
+app.use(auth); // мидлвар авторизации
 
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 app.use('/', notFoundRouter);
 
 app.use(errorLogger); // подключаю логер ошибок
+
+app.use(errorHandler); // подключаю мидлвар - централизованный обработчик ошибок
 
 // Подключаюсь к базе данных:
 const connect = async () => {
