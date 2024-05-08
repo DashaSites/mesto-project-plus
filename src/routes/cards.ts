@@ -11,19 +11,19 @@ const cardRouter = Router();
 
 // Маршруты карточек:
 
-// Маршрут возвращает все карточки
+// + Маршрут возвращает все карточки
 cardRouter.get('/', getCards);
 
-// Создает карточку
+// + Создает карточку
 cardRouter.post('/', createCard);
 
-// Удаляет карточку по идентификатору
+// + Удаляет карточку по идентификатору
 cardRouter.delete('/:cardId', deleteCardById);
 
-// Поставить лайк карточке
+// + Поставить лайк карточке
 cardRouter.put('/:cardId/likes', likeCard);
 
-// Убрать лайк с карточки
+// + Убрать лайк с карточки
 cardRouter.delete('/:cardId/likes', dislikeCard);
 
 export default cardRouter;

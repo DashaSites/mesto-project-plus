@@ -4,6 +4,7 @@ import {
   model,
   Document,
 } from "mongoose";
+import NotFoundError from "../errors/not-found-error";
 
 // Описание схемы карточки
 interface ICard {
@@ -61,7 +62,8 @@ cardSchema.static(
   async function checkAndDeleteCard(cardId: string, currentUserId: string) {
     const card = await this.findById(cardId);
     if (!card) {
-      throw new Error("The card is not found");
+      throw new NotFoundError('Card was not found');
+      // throw new Error("The card is not found");
     }
     console.log('card.owner', String(card.owner));
     console.log('currentUserId', currentUserId);

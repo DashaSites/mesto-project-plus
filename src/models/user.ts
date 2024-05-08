@@ -6,6 +6,7 @@ import {
 } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
+import BadRequestError from '../errors/bad-request-error';
 
 // Здесь описание схемы пользователя
 
@@ -67,13 +68,15 @@ userSchema.static('findUserByCredentials', async function findUserByCredentials(
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error('Wrong email or password'));
+        throw new BadRequestError('Wrong email or password');
+        // return Promise.reject(new Error('Wrong email or password'));
       }
 
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new Error('Wrong email or password'));
+            throw new BadRequestError('Wrong email or password');
+            // return Promise.reject(new Error('Wrong email or password'));
           }
 
           return user; // теперь user доступен
