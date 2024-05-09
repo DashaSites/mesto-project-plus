@@ -38,6 +38,12 @@ const userSchema = new Schema<IUser, UserModel>({
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    validate: {
+      validator(v: string) { // validator - функция проверки данных. v - значение свойства email
+        return validator.isURL(v); // если введенное значение не пройдет тест, вернется false
+      },
+      message: 'The url is not correct', // выводится в случае false
+    },
   },
   email: {
     type: String,
@@ -45,7 +51,7 @@ const userSchema = new Schema<IUser, UserModel>({
     unique: true,
     validate: {
       validator(v: string) { // validator - функция проверки данных. v - значение свойства email
-        validator.isEmail(v); // если введенное значение не пройдет тест, вернется false
+        return validator.isEmail(v); // если введенное значение не пройдет тест, вернется false
       },
       message: 'The email address you entered is not correct', // выводится в случае false
     },

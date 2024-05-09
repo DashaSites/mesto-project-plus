@@ -13,12 +13,6 @@ import BadRequestError from '../errors/bad-request-error';
 // Контроллеры (controllers) содержат основную логику обработки запроса.
 // Методы описывают, как обрабатывать данные и какой результат возвращать.
 
-// interface RequestUser extends Request {
-//   user: {
-//     _id: string | Schema.Types.ObjectId;
-//   };
-// }
-
 // + Получаем всех пользователей
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -58,7 +52,6 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
 export const getCurrentUserInfo = async (req: Request, res: Response, next: NextFunction) => {
   try { // находим текущего пользователя по его токену, который лежит в req.user
     const user = await User.findById(req.user).orFail(() => {
-      console.log(req.user);
       throw new NotFoundError('User was not found');
       // const error = new Error('User was not found');
       // error.name = 'NotFoundError';

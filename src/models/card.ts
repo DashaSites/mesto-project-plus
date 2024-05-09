@@ -60,13 +60,11 @@ export const noPermissionError = 'NoPermissonError';
 cardSchema.static(
   "checkAndDeleteCard",
   async function checkAndDeleteCard(cardId: string, currentUserId: string) {
-    const card = await this.findById(cardId);
+    const card: ICard = await this.findById(cardId);
     if (!card) {
       throw new NotFoundError('Card was not found');
       // throw new Error("The card is not found");
     }
-    console.log('card.owner', String(card.owner));
-    console.log('currentUserId', currentUserId);
     if (String(card.owner) !== currentUserId) {
       throw noPermissionError;
     }
