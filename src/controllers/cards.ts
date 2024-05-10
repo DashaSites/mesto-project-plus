@@ -7,7 +7,6 @@ import {
 import Card from '../models/card';
 import BadRequestError from '../errors/bad-request-error';
 import NotFoundError from '../errors/not-found-error';
-// import NotFoundError from '../errors/not-found-error';
 
 // Методы контроллеров описывают, как обрабатывать данные и какой результат возвращать.
 
@@ -18,7 +17,6 @@ export const getCards = async (req: Request, res: Response, next: NextFunction) 
     return res.status(REQUEST_SUCCEEDED).send(cards);
   } catch (error) {
     return next(error);
-    // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' });
   }
 };
 
@@ -31,10 +29,8 @@ export const createCard = async (req: Request, res: Response, next: NextFunction
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError('Incorrect data'));
-      // return res.status(BAD_REQUEST_ERROR).send({ message: 'Incorrect data' });
     }
     return next(error);
-    // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' });
   }
 };
 
@@ -50,11 +46,9 @@ export const deleteCardById = async (req: Request, res: Response, next: NextFunc
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) { // ошибка про некорректный айдишник
       next(new BadRequestError('Invalid data'));
-      // return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid data' });
     }
     // ошибка сервера
     return next(error);
-    // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' });
   }
 };
 
@@ -66,26 +60,17 @@ const updateLike = async (req: Request, res: Response, next: NextFunction, metho
       .findByIdAndUpdate(cardId, { [method]: { likes: req.user } }, { new: true })
       .orFail(() => {
         throw new NotFoundError('Card was not found');
-        // const error = new Error('Card was not found');
-        // error.name = 'NotFoundError';
-        // return error;
       });
     return res.status(REQUEST_SUCCEEDED).send(updatedCard);
   } catch (error) {
-    // if (error instanceof Error && error.name === 'NotFoundError') {
-    //   return res.status(NOT_FOUND_ERROR).send({ message: error.message });
-    // }
     if (error instanceof mongoose.Error.CastError) {
       next(new BadRequestError('Incorrect data'));
-      // return res.status(BAD_REQUEST_ERROR).send({ message: 'Incorrect data' });
     }
     if (error instanceof mongoose.Error.CastError) {
       next(new BadRequestError('Incorrect data'));
-      // return res.status(BAD_REQUEST_ERROR).send({ message: 'Incorrect data' });
     }
 
     return next(error);
-    // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' });
   }
 };
 
