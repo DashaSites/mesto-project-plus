@@ -9,6 +9,7 @@ import {
 import User from '../models/user';
 import NotFoundError from '../errors/not-found-error';
 import BadRequestError from '../errors/bad-request-error';
+import ConflictError from '../errors/conflict-error';
 
 // Контроллеры (controllers) содержат основную логику обработки запроса.
 // Методы описывают, как обрабатывать данные и какой результат возвращать.
@@ -81,6 +82,9 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
       email: newUser.email,
     });
   } catch (error) {
+    if (error.code === 11000) {
+      return next(new ConflictError('User with such email is already registered'));
+    }
     if (error instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError('Incorrect data'));
     }
