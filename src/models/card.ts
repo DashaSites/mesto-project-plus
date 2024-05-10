@@ -4,7 +4,9 @@ import {
   model,
   Document,
 } from "mongoose";
+import validator from "validator";
 import NotFoundError from "../errors/not-found-error";
+import ForbiddenError from "../errors/forbidden-error";
 
 // Описание схемы карточки
 interface ICard {
@@ -34,6 +36,12 @@ const cardSchema = new Schema<ICard>(
     link: {
       type: String,
       required: [true, "A value for this field is required"],
+      validate: {
+        validator(v: string) {
+          return validator.isURL(v);
+        },
+        message: 'The url is not correct', // выводится в случае false
+      },
     },
     owner: {
       type: Schema.Types.ObjectId,
@@ -55,18 +63,15 @@ const cardSchema = new Schema<ICard>(
   },
 );
 
-export const noPermissionError = 'NoPermissonError';
-
 cardSchema.static(
   "checkAndDeleteCard",
   async function checkAndDeleteCard(cardId: string, currentUserId: string) {
     const card: ICard = await this.findById(cardId);
     if (!card) {
       throw new NotFoundError('Card was not found');
-      // throw new Error("The card is not found");
     }
     if (String(card.owner) !== currentUserId) {
-      throw noPermissionError;
+      throw new ForbiddenError('You are not permitted to delete this card');
     }
     return this.findByIdAndDelete(card);
   },

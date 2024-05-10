@@ -4,9 +4,8 @@ import {
   REQUEST_SUCCEEDED,
   RESOURCE_CREATED,
 } from '../constants/constants';
-import Card, { noPermissionError } from '../models/card';
+import Card from '../models/card';
 import BadRequestError from '../errors/bad-request-error';
-import ForbiddenError from '../errors/forbidden-error';
 import NotFoundError from '../errors/not-found-error';
 // import NotFoundError from '../errors/not-found-error';
 
@@ -53,10 +52,7 @@ export const deleteCardById = async (req: Request, res: Response, next: NextFunc
       next(new BadRequestError('Invalid data'));
       // return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid data' });
     }
-    if (error === noPermissionError) { // ошибка "нет прав удалить эту карту"
-      next(new ForbiddenError('You are not permitted to delete this card'));
-      // return res.status(NO_PERMISSION_ERROR).send({ message: 'No permission for this action' });
-    } // ошибка сервера
+    // ошибка сервера
     return next(error);
     // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' });
   }

@@ -189,7 +189,7 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
       // создаю токен: пейлоуд токена и секретный ключ подписи
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res
-        .cookie('token', token, { httpOnly: true })
+        .cookie('token', token, { httpOnly: true }) // куки сохраняется в заголовке
         .json({ message: 'You are successfully logged in' });
     })
     .catch(next);
