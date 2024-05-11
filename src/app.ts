@@ -12,6 +12,7 @@ import { createUser, login } from './controllers/users';
 import auth from './middlewares/auth';
 import { errorLogger, requestLogger } from './middlewares/logger';
 import { errorHandler } from './middlewares/error-handler';
+import { urlRegEx } from './constants/constants';
 
 const { PORT = 3000, MONGO_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
@@ -35,7 +36,7 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(200),
-    avatar: Joi.string().uri(),
+    avatar: Joi.string().pattern(urlRegEx).message('The url is incorrect'),
     email: Joi.string().email(),
     password: Joi.string().alphanum().min(2).max(50),
   }),

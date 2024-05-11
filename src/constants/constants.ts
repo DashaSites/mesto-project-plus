@@ -7,3 +7,5 @@ export const INTERNAL_SERVER_ERROR = 500;
 export const NO_PERMISSION_ERROR = 403;
 export const CONFLICT_ERROR = 409;
 export const UNAUTHORIZED_ERROR = 401;
+
+export const urlRegEx = /^(https?):\/\/(([a-z\d]([a-z\d-]*[a-z\d])?\.)+[a-z]{2,}|localhost)(\/[-a-z\d%_.~+]*)*(\?[;&a-z\d%_.~+=-]*)?(#[-a-z\d_]*)?$/;

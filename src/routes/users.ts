@@ -7,6 +7,7 @@ import {
   updateUserAvatar,
   getCurrentUserInfo,
 } from '../controllers/users';
+import { urlRegEx } from '../constants/constants';
 
 const userRouter = Router();
 
@@ -34,7 +35,7 @@ userRouter.patch('/me', celebrate({
 // Обновляет аватар пользователя
 userRouter.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().uri().required(),
+    avatar: Joi.string().pattern(urlRegEx).message('The url is incorrect'),
   }),
 }), updateUserAvatar);
 
