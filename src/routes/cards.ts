@@ -7,6 +7,7 @@ import {
   likeCard,
   dislikeCard,
 } from '../controllers/cards';
+import { urlRegEx } from '../constants/constants';
 
 const cardRouter = Router();
 
@@ -19,28 +20,28 @@ cardRouter.get('/', getCards);
 cardRouter.post('/', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().uri(),
+    link: Joi.string().required().pattern(urlRegEx).message('The url is incorrect'),
   }),
 }), createCard);
 
 // + Удаляет карточку по идентификатору
 cardRouter.delete('/:cardId', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().alphanum().length(24),
+    cardId: Joi.string().required().hex().length(24),
   }),
 }), deleteCardById);
 
 // + Поставить лайк карточке
 cardRouter.put('/:cardId/likes', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().alphanum().length(24),
+    cardId: Joi.string().required().hex().length(24),
   }),
 }), likeCard);
 
 // + Убрать лайк с карточки
 cardRouter.delete('/:cardId/likes', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().alphanum().length(24),
+    cardId: Joi.string().required().hex().length(24),
   }),
 }), dislikeCard);
 

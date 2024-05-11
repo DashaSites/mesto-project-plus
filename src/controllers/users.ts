@@ -9,6 +9,7 @@ import {
 import User from '../models/user';
 import NotFoundError from '../errors/not-found-error';
 import BadRequestError from '../errors/bad-request-error';
+import ConflictError from '../errors/conflict-error';
 
 // Контроллеры (controllers) содержат основную логику обработки запроса.
 // Методы описывают, как обрабатывать данные и какой результат возвращать.
@@ -20,7 +21,6 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
     return res.status(REQUEST_SUCCEEDED).send(users);
   } catch (error) {
     return next(error);
-    // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' });
   }
 };
 
@@ -30,21 +30,13 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
     const { userId } = req.params;
     const user = await User.findById(userId).orFail(() => {
       throw new NotFoundError('User with such id was not found');
-      // const error = new Error('User with such id was not found');
-      // error.name = 'NotFoundError';
-      // return error;
     });
     return res.status(REQUEST_SUCCEEDED).send(user);
   } catch (error) {
-    // if (error instanceof Error && error.name === 'NotFoundError') {
-    //   return res.status(NOT_FOUND_ERROR).send({ message: error.message });
-    // }
     if (error instanceof mongoose.Error.CastError) {
       next(new BadRequestError('Invalid user id'));
-      // return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid user id' });
     }
     return next(error);
-    // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' });
   }
 };
 
@@ -53,21 +45,13 @@ export const getCurrentUserInfo = async (req: Request, res: Response, next: Next
   try { // находим текущего пользователя по его токену, который лежит в req.user
     const user = await User.findById(req.user).orFail(() => {
       throw new NotFoundError('User was not found');
-      // const error = new Error('User was not found');
-      // error.name = 'NotFoundError';
-      // return error;
     });
     return res.status(REQUEST_SUCCEEDED).send(user);
   } catch (error) {
-    // if (error instanceof Error && error.name === 'NotFoundError') {
-    //   return res.status(NOT_FOUND_ERROR).send({ message: error.message });
-    // }
     if (error instanceof mongoose.Error.CastError) {
       next(new BadRequestError('Invalid user id'));
-      // return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid user id' });
     }
     return next(error);
-    // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' });
   }
 };
 
@@ -90,11 +74,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
       email,
       password: hashedPassword,
     });
-    if (!newUser) {
-      throw new NotFoundError('User was not found');
-    }
-    // const { _id, name, about, avatar } = newUser;
-    return res.status(RESOURCE_CREATED).send({ // send({ data: newUser });
+    return res.status(RESOURCE_CREATED).send({
       _id: newUser._id,
       name: newUser.name,
       about: newUser.about,
@@ -102,12 +82,13 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
       email: newUser.email,
     });
   } catch (error) {
+    if (error.code === 11000) {
+      return next(new ConflictError('User with such email is already registered'));
+    }
     if (error instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError('Incorrect data'));
-      // return res.status(BAD_REQUEST_ERROR).send({ message: 'Incorrect data' });
     }
     return next(error);
-    // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' });
   }
 };
 
@@ -124,25 +105,13 @@ export const updateUserProfile = async (req: Request, res: Response, next: NextF
       { new: true, runValidators: true },
     ).orFail(() => {
       throw new NotFoundError('User was not found');
-      // const error = new Error('User not found');
-      // error.name = 'NotFoundError';
-      // return error;
     });
     return res.status(REQUEST_SUCCEEDED).send(updatedUser);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError('Incorrect data'));
-      // return res.status(BAD_REQUEST_ERROR).send({ message: 'Incorrect data' });
-    }
-    // if (error instanceof Error && error.name === 'NotFoundError') {
-    //   return res.status(NOT_FOUND_ERROR).send({ message: error.message });
-    // }
-    if (error instanceof mongoose.Error.CastError) {
-      next(new BadRequestError('Invalid user data'));
-      // return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid user data' });
     }
     return next(error);
-    // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' });
   }
 };
 
@@ -158,25 +127,13 @@ export const updateUserAvatar = async (req: Request, res: Response, next: NextFu
       { new: true, runValidators: true },
     ).orFail(() => {
       throw new NotFoundError('User was not found');
-      // const error = new Error('User not found');
-      // error.name = 'NotFoundError';
-      // return error;
     });
     return res.status(REQUEST_SUCCEEDED).send(updatedAvatar);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError('Incorrect data'));
-      // return res.status(BAD_REQUEST_ERROR).send({ message: 'Incorrect data' });
-    }
-    // if (error instanceof Error && error.name === 'NotFoundError') {
-    //   return res.status(NOT_FOUND_ERROR).send({ message: error.message });
-    // }
-    if (error instanceof mongoose.Error.CastError) {
-      next(new BadRequestError('Invalid user data'));
-      // return res.status(BAD_REQUEST_ERROR).send({ message: 'Invalid user data' });
     }
     return next(error);
-    // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Internal server error' });
   }
 };
 
@@ -189,7 +146,7 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
       // создаю токен: пейлоуд токена и секретный ключ подписи
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res
-        .cookie('token', token, { httpOnly: true })
+        .cookie('token', token, { httpOnly: true }) // куки сохраняется в заголовке
         .json({ message: 'You are successfully logged in' });
     })
     .catch(next);
