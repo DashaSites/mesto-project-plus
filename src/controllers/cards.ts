@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import {
@@ -29,8 +30,9 @@ export const createCard = async (req: Request, res: Response, next: NextFunction
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError('Incorrect data'));
+    } else {
+      next(error);
     }
-    return next(error);
   }
 };
 
@@ -46,9 +48,9 @@ export const deleteCardById = async (req: Request, res: Response, next: NextFunc
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) { // ошибка про некорректный айдишник
       next(new BadRequestError('Invalid data'));
+    } else {
+      next(error);
     }
-    // ошибка сервера
-    return next(error);
   }
 };
 
@@ -65,12 +67,9 @@ const updateLike = async (req: Request, res: Response, next: NextFunction, metho
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
       next(new BadRequestError('Incorrect data'));
+    } else {
+      next(error);
     }
-    if (error instanceof mongoose.Error.CastError) {
-      next(new BadRequestError('Incorrect data'));
-    }
-
-    return next(error);
   }
 };
 

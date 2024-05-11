@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
@@ -35,8 +36,9 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
       next(new BadRequestError('Invalid user id'));
+    } else {
+      next(error);
     }
-    return next(error);
   }
 };
 
@@ -50,8 +52,9 @@ export const getCurrentUserInfo = async (req: Request, res: Response, next: Next
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
       next(new BadRequestError('Invalid user id'));
+    } else {
+      next(error);
     }
-    return next(error);
   }
 };
 
@@ -83,12 +86,12 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     });
   } catch (error) {
     if (error.code === 11000) {
-      return next(new ConflictError('User with such email is already registered'));
-    }
-    if (error instanceof mongoose.Error.ValidationError) {
+      next(new ConflictError('User with such email is already registered'));
+    } else if (error instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError('Incorrect data'));
+    } else {
+      next(error);
     }
-    return next(error);
   }
 };
 
@@ -110,8 +113,9 @@ export const updateUserProfile = async (req: Request, res: Response, next: NextF
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError('Incorrect data'));
+    } else {
+      next(error);
     }
-    return next(error);
   }
 };
 
@@ -132,8 +136,9 @@ export const updateUserAvatar = async (req: Request, res: Response, next: NextFu
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError('Incorrect data'));
+    } else {
+      next(error);
     }
-    return next(error);
   }
 };
 
