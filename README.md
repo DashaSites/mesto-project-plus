@@ -26,8 +26,9 @@ This project was developed as part of a backend training module focused on secur
    cd mesto-project-plus
 3. Install dependencies: npm install
 4. Start the development server (with hot reload): npm run dev
-Alternatively, to run once without hot reload: npm run start
-5. Use Postman or a similar tool to test API endpoints:
+   <br>
+   Alternatively, to run once without hot reload: npm run start
+6. Use Postman or a similar tool to test API endpoints:
    - POST /signup – to create a new user
    - POST /signin – to log in and receive a JWT token
    - GET /users/me – to fetch current user info (token required)
