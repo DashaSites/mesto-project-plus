@@ -19,7 +19,7 @@ This project was developed as part of a backend training module focused on secur
 - Winston (logging)
 
 #### To run this project locally:
-0. Navigate to the folder where you want to save this project
+0. Navigate to the folder where you'd like to save the project
 1. Clone the repository:
    git clone https://github.com/DashaSites/mesto-project-plus.git
 2. Enter the project folder:
